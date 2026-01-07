@@ -1,0 +1,57 @@
+Major refactoring: Add robust parsing, validation, and verbose mode
+
+This commit represents a comprehensive refactoring of the Rejsekort PDF
+parser to improve reliability, maintainability, and user experience.
+
+Motivation:
+- Initial version (v27) had fragile parsing logic
+- Failed to handle edge cases (multiple formats, encoding issues)
+- Lacked validation and error reporting
+- No debug capability for troubleshooting
+
+Core Functionality Improvements:
+- Add support for multiple travelers per journey with flexible parsing
+- Fix multi-journey PDF handling using price-first parsing approach
+- Implement non-breaking space (0xa0) removal from PDF text
+- Change CSV format to European standard (semicolon delimiter, comma decimal)
+- Add UTF-8 BOM for better Excel compatibility
+
+Robustness & Validation:
+- Add location validation (length, special character detection)
+- Implement robust date extraction with English/Danish month support
+- Add filename-based date fallback
+- Add date range validation (2020 to current year + 1)
+- Implement case-insensitive traveler type matching
+- Add distance validation between journey and price entries
+
+Performance & Code Quality:
+- Pre-compile all regex patterns at module level
+- Add "Journeys" section detection to limit search scope
+- Refactor into focused, testable functions (SRP)
+- Add comprehensive docstrings and inline documentation
+
+User Experience:
+- Add argparse-based CLI with --verbose/-v flag
+- Implement conditional debug output (DEBUG/WARNING/ERROR levels)
+- Improve error messages with actionable information
+- Add --help with usage examples
+- Show full tracebacks only in verbose mode
+
+Code Organization:
+- Extract date logic into extract_date_robust()
+- Extract validation into validate_location()
+- Extract traveler parsing into parse_travellers_flexible()
+- Create global TRAVELLER_TYPES dictionary for normalization
+- Add VERBOSE flag for output control
+
+Testing:
+- Validated against 4 sample PDFs (7 journeys total)
+- Tested single/multiple journey scenarios
+- Tested multiple travelers per journey
+- Verified date extraction across formats
+
+Breaking Changes:
+- CSV now uses semicolon delimiter and comma decimal separator
+- Requires argparse (Python 3.2+, part of stdlib)
+
+License: Changed to GNU General Public License v3.0
